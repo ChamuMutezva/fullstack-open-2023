@@ -28,7 +28,7 @@ const App = () => {
     console.log(total);
 
     return (
-        <div>
+        <div className="shadow rounded-lg bg-slate-400 p-8 m-8 max-w-md flex flex-col gap-8">
             <Header course={course.name} />
             <Content parts={course.parts} />
 

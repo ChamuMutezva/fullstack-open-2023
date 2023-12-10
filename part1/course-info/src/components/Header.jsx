@@ -5,7 +5,7 @@ Header.propTypes = {
 function Header(props) {
   return (
     <header>
-        <h1>{props.course}</h1>
+        <h1 className="text-2xl font-[900]">{props.course}</h1>
     </header>
   )
 }
