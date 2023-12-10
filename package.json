@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "mermaid": "^10.6.1"
+    "mermaid": "^10.6.1",
+    "prop-types": "^15.8.1"
   }
 }
