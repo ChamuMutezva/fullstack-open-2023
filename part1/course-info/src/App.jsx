@@ -1,39 +1,55 @@
-import Header from "./components/Header";
-import Content from "./components/Content";
-import Total from "./components/Total";
+import Course from "./components/Course";
 
 const App = () => {
-    const course = {
-        name: "Half Stack application development",
-        parts: [
-            {
-                name: "Fundamentals of React",
-                exercises: 10,
-            },
-            {
-                name: "Using props to pass data",
-                exercises: 7,
-            },
-            {
-                name: "State of a component",
-                exercises: 14,
-            },
-        ],
-    };
-    const initialvalue = 0;
-    const total = course.parts.reduce(
-        (accumulator, currentvalue) => accumulator + currentvalue.exercises,
-        initialvalue
-    );
-    console.log(total);
+    const courses = [
+        {
+            id: 1,
+            name: "Half Stack application development",
+            parts: [
+                {
+                    id: 1,
+                    name: "Fundamentals of React",
+                    exercises: 10,
+                },
+                {
+                    id: 2,
+                    name: "Using props to pass data",
+                    exercises: 7,
+                },
+                {
+                    id: 3,
+                    name: "State of a component",
+                    exercises: 14,
+                },
+                {
+                    id: 4,
+                    name: "Redux",
+                    exercises: 11,
+                },
+            ],
+        },
+        {
+            name: "Node.js",
+            id: 2,
+            parts: [
+                {
+                    name: "Routing",
+                    exercises: 3,
+                    id: 1,
+                },
+                {
+                    name: "Middlewares",
+                    exercises: 7,
+                    id: 2,
+                },
+            ],
+        },
+    ];
 
     return (
-        <div className="shadow rounded-lg bg-slate-400 p-8 m-8 max-w-md flex flex-col gap-8">
-            <Header course={course.name} />
-            <Content parts={course.parts} />
-
-            <Total total={total} />
-        </div>
+        <ul>
+            <Course courses={courses} />
+        </ul>
     );
 };
 export default App;

@@ -1,12 +1,10 @@
-
-
 // eslint-disable-next-line react/prop-types
-function Total({total}) {
-  return (
-    <div>
-        <p>Number of exercises {total}</p>
-    </div>
-  )
+function Total({ total }) {
+    return (
+        <div>
+            <p>Total of {total} exercises</p>
+        </div>
+    );
 }
 
-export default Total
+export default Total;
