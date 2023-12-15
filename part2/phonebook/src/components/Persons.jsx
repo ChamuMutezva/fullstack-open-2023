@@ -8,7 +8,7 @@ function PersonsList({ displayData }) {
                 {displayData.map((person, idx) => (
                     <li key={idx}>
                         <p>
-                            {person.name} {person.phone}
+                            {person.name} {person.number}
                         </p>
                     </li>
                 ))}

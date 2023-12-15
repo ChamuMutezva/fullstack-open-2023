@@ -1,23 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Search from "./components/Search";
 import AddPerson from "./components/AddPerson";
 import PersonsList from "./components/Persons";
 
 function App() {
-    const [persons, setPersons] = useState([
-        { name: "Arto Hellas", phone: "040-123456", id: 1 },
-        { name: "Ada Lovelace", phone: "39-44-5323523", id: 2 },
-        { name: "Dan Abramov", phone: "12-43-234345", id: 3 },
-        { name: "Mary Poppendieck", phone: "39-23-6423122", id: 4 },
-    ]);
+    const [persons, setPersons] = useState([]);
     const formData = {
         name: "",
-        phone: "",
+        number: "",
     };
     const [newPerson, setNewPerson] = useState(formData);
     const [searchTerm, setSearchTerm] = useState("");
     const [displayData, setDisplayData] = useState(persons);
-    // const [newPhone, setNewPhone] = useState("");
+    
+    useEffect(() => {
+        axios.get("http://localhost:3001/persons").then((response) => {
+            console.log("promise fulfilled");
+            setPersons(response.data);
+            setDisplayData(response.data)
+        });
+    }, []);
     const handleSubmit = (evt) => {
         evt.preventDefault();
         const exist = persons.find(
@@ -30,12 +33,12 @@ function App() {
             setNewPerson({ ...newPerson, name: "" });
         } else {
             setPersons(
-                persons.concat({ name: newPerson.name, phone: newPerson.phone })
+                persons.concat({ name: newPerson.name, number: newPerson.number })
             );
             setDisplayData(
-                persons.concat({ name: newPerson.name, phone: newPerson.phone })
+                persons.concat({ name: newPerson.name, number: newPerson.number })
             );
-            setNewPerson({ ...newPerson, name: "", phone: "" });
+            setNewPerson({ ...newPerson, name: "", number: "" });
         }
     };
 
@@ -55,13 +58,11 @@ function App() {
                 .includes(e.target.value.toLowerCase());
         });
         console.log(filter);
-        //   if (e.target.value !== "") {
-        //       return setPersons(filter);
-        //   }
+       
         return setDisplayData(filter);
     };
 
-    const { name, phone } = newPerson;
+    const { name, number } = newPerson;
     return (
         <div className="flex flex-col gap-8 bg-sky-100 rounded-lg p-8 shadow m-4 max-w-md">
             <h2 className="text-2xl font-[900]">Phonebook</h2>
@@ -70,11 +71,11 @@ function App() {
             <AddPerson
                 handleSubmit={handleSubmit}
                 onChange={onChange}
-                phone={phone}
+                number={number}
                 name={name}
             />
 
-            <PersonsList displayData={displayData} />
+            <PersonsList displayData={displayData } />
         </div>
     );
 }
