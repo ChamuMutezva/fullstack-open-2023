@@ -13,6 +13,7 @@ function App() {
     const [newPerson, setNewPerson] = useState(formData);
     const [searchTerm, setSearchTerm] = useState("");
     const [displayData, setDisplayData] = useState(persons);
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         personService.getAll().then((initialPersons) => {
@@ -69,6 +70,12 @@ function App() {
                                 name: "",
                                 number: "",
                             });
+                            setErrorMessage(
+                                `${exist.name}'s phone number has been updated`
+                            );
+                            setTimeout(() => {
+                                setErrorMessage(null);
+                            }, 5000);
                         })
                         .catch(() => {
                             alert(
@@ -88,7 +95,13 @@ function App() {
                 }
             } else {
                 alert(`${newPerson.name} is already added to the phonebook`);
-                setNewPerson({ ...newPerson, name: "" });
+                setNewPerson({ ...newPerson, name: "", number: "" });
+                setErrorMessage(
+                    `${newPerson.name} is already added to the phonebook`
+                );
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 5000);
             }
         } else {
             personService.create(newPerson).then((returnedPerson) => {
@@ -96,6 +109,12 @@ function App() {
                 setPersons(persons.concat(returnedPerson));
                 setDisplayData(persons.concat(returnedPerson));
                 setNewPerson({ ...newPerson, name: "", number: "" });
+                setErrorMessage(
+                    `${newPerson.name} has been added to the phonebook`
+                );
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 5000);
             });
         }
     };
@@ -129,7 +148,12 @@ function App() {
             console.log(personFilter);
             setDisplayData(persons.filter((person) => person.id !== id));
             personService.deletePerson(id).then(personFilter);
-            console.log("delete yes");
+            setErrorMessage(
+                `${personFilter.name} has been removed from phonebook`
+            );
+            setTimeout(() => {
+                setErrorMessage(null);
+            }, 5000);
         }
     };
 
@@ -144,6 +168,7 @@ function App() {
                 onChange={onChange}
                 number={number}
                 name={name}
+                errorMessage={errorMessage}
             />
 
             <PersonsList

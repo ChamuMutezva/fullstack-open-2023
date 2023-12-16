@@ -1,9 +1,17 @@
 /* eslint-disable react/prop-types */
+const Notification = ({ message }) => {
+    if (message === null || message.length === 0) {
+        return null;
+    }
 
-function AddPerson({ handleSubmit, onChange, number, name }) {
+    return <div className="error">{message}</div>;
+};
+
+function AddPerson({ handleSubmit, onChange, number, name, errorMessage }) {
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
             <h2 className="text-2xl font-[900]">Add new person</h2>
+            <Notification message={errorMessage} />
             <div className="input-container">
                 <label htmlFor="name">name:</label>
                 <input
