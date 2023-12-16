@@ -3,6 +3,7 @@
 function AddPerson({ handleSubmit, onChange, number, name }) {
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+            <h2 className="text-2xl font-[900]">Add new person</h2>
             <div className="input-container">
                 <label htmlFor="name">name:</label>
                 <input

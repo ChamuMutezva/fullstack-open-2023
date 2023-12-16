@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import Search from "./components/Search";
 import AddPerson from "./components/AddPerson";
 import PersonsList from "./components/Persons";
+import personService from "./services/persons";
 
 function App() {
     const [persons, setPersons] = useState([]);
@@ -13,32 +13,90 @@ function App() {
     const [newPerson, setNewPerson] = useState(formData);
     const [searchTerm, setSearchTerm] = useState("");
     const [displayData, setDisplayData] = useState(persons);
-    
+
     useEffect(() => {
-        axios.get("http://localhost:3001/persons").then((response) => {
+        personService.getAll().then((initialPersons) => {
             console.log("promise fulfilled");
-            setPersons(response.data);
-            setDisplayData(response.data)
+            setPersons(initialPersons);
+            setDisplayData(initialPersons);
         });
     }, []);
     const handleSubmit = (evt) => {
         evt.preventDefault();
+        console.log(persons);
+        // Find if person is already in phonebook
         const exist = persons.find(
             (person) =>
                 person.name.toLowerCase() === newPerson.name.toLowerCase()
         );
         console.log(exist);
         if (exist) {
-            alert(`${newPerson.name} is already added to the phonebook`);
-            setNewPerson({ ...newPerson, name: "" });
+            // check if the person object and if new number is the same as number in obj
+            if (exist && exist.number !== newPerson.number) {
+                console.log(newPerson.number);
+
+                // if true , create a new object
+                const changedPerson = {
+                    ...exist,
+                    number: newPerson.number,
+                };
+                console.log(changedPerson);
+                // update a single person details
+                if (
+                    window.confirm(
+                        `${exist.name} is already in phonebook, replace old number with new one`
+                    )
+                ) {
+                    personService
+                        .update(exist.id, changedPerson)
+                        .then((returnedPerson) => {
+                            setPersons(
+                                persons.map((person) =>
+                                    person.id !== exist.id
+                                        ? person
+                                        : returnedPerson
+                                )
+                            );
+                            setDisplayData(
+                                persons.map((person) =>
+                                    person.id !== exist.id
+                                        ? person
+                                        : returnedPerson
+                                )
+                            );
+                            setNewPerson({
+                                ...newPerson,
+                                name: "",
+                                number: "",
+                            });
+                        })
+                        .catch(() => {
+                            alert(
+                                `the person '${exist.name} was already in the server`
+                            );
+                            setPersons(
+                                persons.filter(
+                                    (person) => person.id !== exist.id
+                                )
+                            );
+                            setDisplayData(
+                                persons.filter(
+                                    (person) => person.id !== exist.id
+                                )
+                            );
+                        });
+                }
+            } else {
+                alert(`${newPerson.name} is already added to the phonebook`);
+                setNewPerson({ ...newPerson, name: "" });
+            }
         } else {
-            setPersons(
-                persons.concat({ name: newPerson.name, number: newPerson.number })
-            );
-            setDisplayData(
-                persons.concat({ name: newPerson.name, number: newPerson.number })
-            );
-            setNewPerson({ ...newPerson, name: "", number: "" });
+            personService.create(newPerson).then((returnedPerson) => {
+                console.log(returnedPerson);
+                setPersons(persons.concat(returnedPerson));
+                setDisplayData(persons.concat(returnedPerson));
+                setNewPerson({ ...newPerson, name: "", number: "" });
+            });
         }
     };
 
@@ -58,8 +116,21 @@ function App() {
                 .includes(e.target.value.toLowerCase());
         });
         console.log(filter);
-       
+
         return setDisplayData(filter);
+    };
+
+    const handleDeletePerson = (id) => {
+        const personFilter = persons.find((target) => target.id === id);
+        if (
+            window.confirm(`Do you really want to delete ${personFilter.name}?`)
+        ) {
+            setPersons(persons.filter((person) => person.id !== id));
+            console.log(personFilter);
+            setDisplayData(persons.filter((person) => person.id !== id));
+            personService.deletePerson(id).then(personFilter);
+            console.log("delete yes");
+        }
     };
 
     const { name, number } = newPerson;
@@ -75,7 +146,10 @@ function App() {
                 name={name}
             />
 
-            <PersonsList displayData={displayData } />
+            <PersonsList
+                displayData={displayData}
+                handleDeletePerson={handleDeletePerson}
+            />
         </div>
     );
 }
