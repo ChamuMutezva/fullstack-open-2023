@@ -63,7 +63,9 @@ function App() {
         return (
             <div key={country.cca3}>
                 {" "}
-                <h3>{country.name.common}</h3>{" "}
+                <h3 className="text-lg font-bold">
+                    {country.name.common}
+                </h3>{" "}
                 <p>
                     Capital:{" "}
                     {country.capital.map((capital, idx) => (
