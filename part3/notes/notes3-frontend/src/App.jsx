@@ -6,13 +6,15 @@ const App = () => {
     const [notes, setNotes] = useState([]);
     const [newNote, setNewNote] = useState("");
     const [showAll, setShowAll] = useState(true);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     useEffect(() => {
         noteService.getAll().then((initialNotes) => {
             setNotes(initialNotes);
         });
     }, []);
-    console.log("render", notes.length, "notes");
+
+   // console.log("render", notes.length, "notes");
 
     const addNote = (event) => {
         event.preventDefault();
@@ -32,29 +34,34 @@ const App = () => {
         setNewNote(event.target.value);
     };
 
-    const toggleImportanceOf = (id) => {       
+    const toggleImportanceOf = (id) => {
         const note = notes.find((n) => n.id === id);
         const changedNote = { ...note, important: !note.important };
-
+        console.log(note);
         noteService
             .update(id, changedNote)
             .then((returnedNote) => {
                 setNotes(
-                    notes.map((note) => (note.id !== id ? note : returnedNote))
+                    notes.map((note) =>
+                        Number(note.id) !== Number(id) ? note : returnedNote
+                    )
                 );
             })
             .catch((error) => {
-                alert(
-                    `the note '${note.content}' was already deleted from server`
+                setErrorMessage(
+                    `Note '${note.content}' was already removed from server`
                 );
-                setNotes(notes.filter((n) => n.id !== id));
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 5000);
             });
+      //  console.log(changedNote);
     };
 
     const notesToShow = showAll
         ? notes
         : notes.filter((note) => note.important);
-
+   // console.log(notesToShow);
     return (
         <div>
             <h1>Notes</h1>
@@ -64,7 +71,7 @@ const App = () => {
                 </button>
             </div>
             <ul>
-                {notesToShow.map((note) => (
+                {notesToShow?.map((note) => (
                     <Note
                         key={note.id}
                         note={note}

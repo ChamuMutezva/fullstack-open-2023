@@ -1,5 +1,7 @@
 import axios from "axios";
-const baseUrl = "http://localhost:3001/api/notes";
+import { API_ENDPOINT_PATH } from "./config";
+
+ const baseUrl = `${API_ENDPOINT_PATH}/api/notes`;
 
 const getAll = () => {
     const request = axios.get(baseUrl);
