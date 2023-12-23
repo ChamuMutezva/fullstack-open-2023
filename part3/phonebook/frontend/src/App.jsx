@@ -78,19 +78,12 @@ function App() {
                             }, 5000);
                         })
                         .catch(() => {
-                            alert(
-                                `the person '${exist.name} was already in the server`
+                            setErrorMessage(
+                                `${exist.name}'s exist in the database`
                             );
-                            setPersons(
-                                persons.filter(
-                                    (person) => person.id !== exist.id
-                                )
-                            );
-                            setDisplayData(
-                                persons.filter(
-                                    (person) => person.id !== exist.id
-                                )
-                            );
+                            setTimeout(() => {
+                                setErrorMessage(null);
+                            }, 5000);
                         });
                 }
             } else {
@@ -104,18 +97,26 @@ function App() {
                 }, 5000);
             }
         } else {
-            personService.create(newPerson).then((returnedPerson) => {
-                console.log(returnedPerson);
-                setPersons(persons.concat(returnedPerson));
-                setDisplayData(persons.concat(returnedPerson));
-                setNewPerson({ ...newPerson, name: "", number: "" });
-                setErrorMessage(
-                    `${newPerson.name} has been added to the phonebook`
-                );
-                setTimeout(() => {
-                    setErrorMessage(null);
-                }, 5000);
-            });
+            personService
+                .create(newPerson)
+                .then((returnedPerson) => {
+                    console.log(returnedPerson);
+                    setPersons(persons.concat(returnedPerson));
+                    setDisplayData(persons.concat(returnedPerson));
+                    setNewPerson({ ...newPerson, name: "", number: "" });
+                    setErrorMessage(
+                        `${newPerson.name} has been added to the phonebook`
+                    );
+                    setTimeout(() => {
+                        setErrorMessage(null);
+                    }, 5000);
+                })
+                .catch((error) => {                  
+                    setErrorMessage(error.response.data.error);
+                    setTimeout(() => {
+                        setErrorMessage(null);
+                    }, 5000);
+                });
         }
     };
 
