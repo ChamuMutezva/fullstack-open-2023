@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 require("dotenv").config();
 const express = require("express");
-// const morgan = require("morgan");
+const morgan = require("morgan");
 const cors = require("cors");
 const Person = require("./models/person");
 
@@ -9,6 +9,7 @@ const app = express();
 app.use(cors());
 
 app.use(express.json());
+app.use(morgan("tiny"));
 
 const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: "unknown endpoint" });
@@ -29,6 +30,14 @@ const errorHandler = (error, request, response, next) => {
 app.get("/", (request, response) => {
     response.send(`<h1>Phonebook page</h1>`);
 });
+
+app.get("/info", (request, response) => {
+    response.send(`<div>
+    <h2>Phonebook has info for ${Person.length} people</h2>
+    <p>${new Date()}</p>
+    </div>`);
+});
+// Sat Dec 23 2023 03:11:21 GMT+0200 (South Africa Standard Time)
 
 // get all people in phonebook
 app.get("/api/persons", (request, response) => {
@@ -88,6 +97,17 @@ const generateId = () => Math.floor(Math.random() * 10000);
 
 app.post("/api/persons", (request, response, next) => {
     const body = request.body;
+
+    // eslint-disable-next-line no-unused-vars
+    morgan.token("body", (req, res) => {
+        JSON.stringify(req.body);
+    });
+
+    app.use(
+        morgan(
+            ":method :url :status :res[content-length] - :response-time ms :body"
+        )
+    );
 
     if (!body.name) {
         return response.status(400).json({
