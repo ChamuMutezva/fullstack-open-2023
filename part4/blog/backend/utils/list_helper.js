@@ -1,4 +1,4 @@
-const Blog = require("../models/blog")
+const Blog = require("../models/blog");
 const initialBlogs = [
     {
         id: "5a422a851b54a676234d17f7",
@@ -49,22 +49,26 @@ const initialBlogs = [
         __v: 0,
     },
 ];
+// 4.3: helper functions and unit tests, step1
 const dummy = (blogs) => {
     return blogs.length === 0 ? 1 : blogs.length / blogs.length;
 };
 
+// 4.4: helper functions and unit tests, step2
 const totalLikes = (blogs) => {
     return blogs.reduce((sum, blog) => {
         return sum + blog.likes;
     }, 0);
 };
 
-const mostLikedBlog = (blogs) => {
+// 4.5*: helper functions and unit tests, step3
+const favoriteBlog = (blogs) => {
     return blogs.find(
         (blog) => blog.likes === Math.max(...blogs.map((blog) => blog.likes))
     );
 };
 
+// 4.7*: helper functions and unit tests, step5
 const mostLikes = (blogs) => {
     const result = blogs.find(
         (blog) => blog.likes === Math.max(...blogs.map((blog) => blog.likes))
@@ -75,6 +79,7 @@ const mostLikes = (blogs) => {
     };
 };
 
+// 4.6*: helper functions and unit tests, step4
 const mostBlogs = (blogs) => {
     const authorBlogs = blogs.reduce((op, { author }) => {
         op[author] = op[author] || 0;
@@ -88,16 +93,16 @@ const mostBlogs = (blogs) => {
 };
 
 const blogsInDb = async () => {
-    const blogs = await Blog.find({})
-    return blogs.map(blog => blog.toJSON())
-  }
+    const blogs = await Blog.find({});
+    return blogs.map((blog) => blog.toJSON());
+};
 
 module.exports = {
     dummy,
     totalLikes,
-    mostLikedBlog,
+    favoriteBlog,
     mostBlogs,
     mostLikes,
-    initialBlogs, 
-    blogsInDb
+    initialBlogs,
+    blogsInDb,
 };

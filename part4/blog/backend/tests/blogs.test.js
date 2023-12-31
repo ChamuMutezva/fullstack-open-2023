@@ -1,5 +1,6 @@
 const listHelper = require("../utils/list_helper");
 
+// 4.3: helper functions and unit tests, step1
 test("dummy returns one", () => {
     const blogs = [];
 
@@ -7,6 +8,7 @@ test("dummy returns one", () => {
     expect(result).toBe(1);
 });
 
+// 4.4: helper functions and unit tests, step2
 describe("total likes", () => {
     const listWithOneBlog = [
         {
@@ -30,9 +32,10 @@ describe("total likes", () => {
     });
 });
 
-describe("Most liked blog", () => {   
-    test("Most liked blog from the list", () => {
-        const result = listHelper.mostLikedBlog(listHelper.initialBlogs);
+// 4.5*: helper functions and unit tests, step3
+describe("Favorite blog", () => {
+    test("Favorite blog from the list", () => {
+        const result = listHelper.favoriteBlog(listHelper.initialBlogs);
         expect(result).toEqual({
             id: "5a422b3a1b54a676234d17f9",
             title: "Canonical string reduction",
@@ -44,23 +47,25 @@ describe("Most liked blog", () => {
     });
 });
 
-describe("Most liked blog and author", () => { 
-    test("Most liked blog from list and author", () => {
-        const result = listHelper.mostLikes(listHelper.initialBlogs)
-        expect(result).toEqual({
-            author: "Edsger W. Dijkstra",
-            likes: 12
-        })
-    })
-})
-
-describe("Author with most blogs", () => {   
+// 4.6*: helper functions and unit tests, step4
+describe("Author with most blogs", () => {
     test("The author who has written most blogs", () => {
         const result = listHelper.mostBlogs(listHelper.initialBlogs);
         console.log(result);
         expect(result).toEqual({
             author: "Robert C. Martin",
             blogs: 3,
+        });
+    });
+});
+
+// 4.7*: helper functions and unit tests, step5
+describe("Most liked blog and author", () => {
+    test("Most liked blog from list and author", () => {
+        const result = listHelper.mostLikes(listHelper.initialBlogs);
+        expect(result).toEqual({
+            author: "Edsger W. Dijkstra",
+            likes: 12,
         });
     });
 });
