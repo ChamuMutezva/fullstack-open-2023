@@ -1,8 +1,10 @@
 POST http://localhost:3001/api/notes 
 Content-Type: application/json
 
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ikt1c2VyaSIsImlkIjoiNjU5MzE5YmI3Y2IyMGQ1NzBhYjNlZGFiIiwiaWF0IjoxNzA0MTQwNzk4fQ.WDpRZgMha5gfv-u7QCcf9T-8uezaWeuuUgbA1Woc1vY
+
 {
-"content": "React advanced programming",
+"content": "Next framework programming",
  "important": true, 
  "userId": "659105870c35dd1964969bef"
 }
