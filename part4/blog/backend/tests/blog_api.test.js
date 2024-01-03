@@ -128,9 +128,9 @@ describe("deletion of a blog", () => {
 
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1);
 
-      //  const titles = blogsAtEnd.map((r) => r.title);
-      //  console.log(titles);
-      //  expect(titles).not.toContain(blogToDelete.title);
+        //  const titles = blogsAtEnd.map((r) => r.title);
+        //  console.log(titles);
+        //  expect(titles).not.toContain(blogToDelete.title);
     });
 }, 100000);
 
@@ -162,6 +162,31 @@ describe("updating a blog post", () => {
         expect(updatedBlog.likes).toBe(18);
     });
 }, 100000);
+
+// 4.16*: bloglist expansion, step4
+describe("Validation when creating new user", () => {
+    test("username has at least 3 characters", async () => {
+        const newUser = {
+            name: "Chamunorwa Mutezva",
+            username: "Chamu",
+            password: "wpopo",
+        };
+
+        expect(newUser.username).toBeDefined();
+        expect(newUser.username.length).toBeGreaterThanOrEqual(3);
+    });
+
+    test("password has at least 3 characters", async () => {
+        const newUser = {
+            name: "Chamunorwa Mutezva",
+            username: "Ch",
+            password: "wpopo",
+        };
+
+        expect(newUser.password).toBeDefined();
+        expect(newUser.password.length).toBeGreaterThanOrEqual(3);
+    });
+});
 
 afterAll(async () => {
     await mongoose.connection.close();
