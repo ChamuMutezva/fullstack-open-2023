@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const app = require("../app");
 const api = supertest(app);
 const Blog = require("../models/blog");
-const User = require("../models/user")
+const User = require("../models/user");
 const helper = require("../utils/list_helper");
 
 beforeEach(async () => {
@@ -72,6 +72,10 @@ describe("Blog added to list", () => {
         // eslint-disable-next-line no-undef
         const token = jwt.sign({ id: user._id }, process.env.SECRET);
 
+        if (!token) {
+            return response.status(401).json({ error: "Token not found" });
+        }
+
         await api
             .post("/api/blogs")
             .set("Authorization", `Bearer ${token}`)
@@ -98,6 +102,10 @@ describe("Blog added to list", () => {
         // eslint-disable-next-line no-undef
         const token = jwt.sign({ id: user._id }, process.env.SECRET);
 
+        if (!token) {
+            return response.status(401).json({ error: "Token not found" });
+        }
+
         await api
             .post("/api/blogs")
             .set("Authorization", `Bearer ${token}`)
@@ -121,6 +129,10 @@ describe("Blog added to list", () => {
         const user = await User.findOne({});
         // eslint-disable-next-line no-undef
         const token = jwt.sign({ id: user._id }, process.env.SECRET);
+
+        if (!token) {
+            return response.status(401).json({ error: "Token not found" });
+        }
 
         await api
             .post("/api/blogs")
