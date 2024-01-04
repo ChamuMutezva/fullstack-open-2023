@@ -1,8 +1,10 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
+const jwt = require("jsonwebtoken");
 const app = require("../app");
 const api = supertest(app);
 const Blog = require("../models/blog");
+const User = require("../models/user")
 const helper = require("../utils/list_helper");
 
 beforeEach(async () => {
@@ -66,8 +68,13 @@ describe("Blog added to list", () => {
             likes: 19,
         };
 
+        const user = await User.findOne({});
+        // eslint-disable-next-line no-undef
+        const token = jwt.sign({ id: user._id }, process.env.SECRET);
+
         await api
             .post("/api/blogs")
+            .set("Authorization", `Bearer ${token}`)
             .send(newBlog)
             .expect(201)
             .expect("Content-Type", /application\/json/);
@@ -87,8 +94,13 @@ describe("Blog added to list", () => {
             url: "www.cssmastery.com",
         };
 
+        const user = await User.findOne({});
+        // eslint-disable-next-line no-undef
+        const token = jwt.sign({ id: user._id }, process.env.SECRET);
+
         await api
             .post("/api/blogs")
+            .set("Authorization", `Bearer ${token}`)
             .send(newBlog)
             .expect(201)
             .expect("Content-Type", /application\/json/);
@@ -106,8 +118,13 @@ describe("Blog added to list", () => {
             likes: 19,
         };
 
+        const user = await User.findOne({});
+        // eslint-disable-next-line no-undef
+        const token = jwt.sign({ id: user._id }, process.env.SECRET);
+
         await api
             .post("/api/blogs")
+            .set("Authorization", `Bearer ${token}`)
             .send(newBlog)
             .expect(201)
             .expect("Content-Type", /application\/json/);
@@ -121,16 +138,9 @@ describe("deletion of a blog", () => {
     test("succeeds with status code 204 if id is valid", async () => {
         const blogsAtStart = await helper.blogsInDb();
         const blogToDelete = blogsAtStart[0];
-
         await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
-
         const blogsAtEnd = await helper.blogsInDb();
-
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1);
-
-        //  const titles = blogsAtEnd.map((r) => r.title);
-        //  console.log(titles);
-        //  expect(titles).not.toContain(blogToDelete.title);
     });
 }, 100000);
 
@@ -152,7 +162,7 @@ describe("updating a blog post", () => {
 
         const response = await api.get("/api/blogs");
         console.log(response.body);
-        // const blogsAtEnd = await helper.blogsInDb();
+
         const updatedBlog = await response.body.find((blog) => {
             console.log(blog.id);
             console.log(blogToUpdate.id);

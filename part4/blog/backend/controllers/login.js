@@ -4,6 +4,10 @@ const bcrypt = require("bcrypt");
 const loginRouter = require("express").Router();
 const User = require("../models/user");
 
+// 4.18: bloglist expansion, step6
+// 4.19: bloglist expansion, step7
+
+
 loginRouter.post("/api/login", async (request, response) => {
     const { username, password } = request.body;
     console.log(username);
