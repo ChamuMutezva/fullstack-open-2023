@@ -13,7 +13,6 @@ const tokenExtractor = async (request, response, next) => {
         token = authorization.substring(7);
     }
 
-    // eslint-disable-next-line no-undef
     const decodedToken = jwt.verify(token, process.env.SECRET);
 
     if (!token || !decodedToken.id) {
