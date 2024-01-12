@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Notification from "./components/Notification";
+import LoginForm from "./components/LoginForm";
+import CreateBlogForm from "./components/CreateBlogForm";
+import Togglable from "./components/Togglable";
 
 const App = () => {
     const [blogs, setBlogs] = useState([]);
@@ -14,10 +17,15 @@ const App = () => {
     const [title, setTitle] = useState("");
     const [errorMessage, setErrorMessage] = useState(null);
     const [infoMessage, setInfoMessage] = useState(null);
+    const [loginVisible, setLoginVisible] = useState(false);
+    const blogFormRef = useRef();
 
     useEffect(() => {
-        blogService.getAll().then((blogs) => setBlogs(blogs));
-    }, []);
+        blogService.getAll().then((blogs) => {
+            blogs.sort((a, b) => a.likes - b.likes);
+            setBlogs(blogs);
+        });
+    }, [blogs]);
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
@@ -34,27 +42,96 @@ const App = () => {
         return window.localStorage.removeItem("loggedBlogAppUser");
     };
 
+    const deleteBlog = (id) => {
+        const blog = blogs.find((blog) => blog.id === id);
+
+        console.log(user.username);
+        console.log(blog.user.username);
+        if (user.username === blog.user.username) {
+            if (
+                confirm(
+                    `Remove blog You're NOT gonna need it! by ${blog.author}`
+                )
+            ) {
+                console.log(user);
+                console.log(blog);
+                try {
+                    blogService.deleteBlog(id).then((returnedBlog) => {
+                        setBlogs(
+                            blogs.filter(
+                                (blog) => Number(blog.id) !== Number(id)
+                            )
+                        );
+                    });
+                } catch (error) {
+                    setErrorMessage(error.message);
+                    setTimeout(() => {
+                        setErrorMessage(null);
+                    }, 5000);
+                }
+            } else {
+                console.log("Deleting blog cancelled");
+            }
+        } else {
+            setErrorMessage(
+                `${blog.user.username} did not create this blog. A blog can only be deleted by the creator`
+            );
+            setTimeout(() => {
+                setErrorMessage(null);
+            }, 5000);
+        }
+    };
+
+    const updateLikes = (id) => {
+        const blog = blogs.find((blog) => blog.id === id);
+        const changedBlog = { ...blog, likes: blog.likes + 1 };
+        console.log(`like button`);
+        blogService
+            .update(id, changedBlog)
+            .then((returnedBlog) => {
+                setBlogs(
+                    blogs.map((blog) =>
+                        Number(blog.id) !== Number(id) ? blog : returnedBlog
+                    )
+                );
+            })
+            .catch((error) => {
+                setErrorMessage(error.message);
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 5000);
+            });
+    };
+
     const handleCreateBlog = (event) => {
         event.preventDefault();
-        const blogObject = {
-            author: author,
-            title: title,
-            url: url,
-        };
+        blogFormRef.current.toggleVisibility();
+        try {
+            const blogObject = {
+                author: author,
+                title: title,
+                url: url,
+            };
 
-        blogService.create(blogObject).then((returnedBlog) => {
-            setBlogs(blogs.concat(returnedBlog));
-            setAuthor("");
-            setTitle("");
-            setUrl("");
-        });
+            blogService.create(blogObject).then((returnedBlog) => {
+                setBlogs(blogs.concat(returnedBlog));
+                setAuthor("");
+                setTitle("");
+                setUrl("");
+            });
 
-        setInfoMessage(
-            `A new blog ${blogObject.title} by ${blogObject.author}`
-        );
-        setTimeout(() => {
-            setInfoMessage(null);
-        }, 5000);
+            setInfoMessage(
+                `A new blog ${blogObject.title} by ${blogObject.author}`
+            );
+            setTimeout(() => {
+                setInfoMessage(null);
+            }, 5000);
+        } catch (error) {
+            setErrorMessage(error);
+            setTimeout(() => {
+                setInfoMessage(null);
+            }, 5000);
+        }
     };
 
     const handleLogin = async (event) => {
@@ -85,31 +162,30 @@ const App = () => {
         }
     };
 
+    const createBlog = () => {
+        return (
+            <Togglable buttonLabel="Create blog" ref={blogFormRef}>
+                <CreateBlogForm
+                    handleCreateBlog={handleCreateBlog}
+                    title={title}
+                    author={author}
+                    url={url}
+                    handleTitleChange={({ target }) => setTitle(target.value)}
+                    handleAuthorChange={({ target }) => setAuthor(target.value)}
+                    handleUrlChange={({ target }) => setUrl(target.value)}
+                />
+            </Togglable>
+        );
+    };
+
     const loginForm = () => (
-        <form onSubmit={handleLogin}>
-            <h2>Login to application</h2>
-            <div>
-                <label htmlFor="username">username</label>
-                <input
-                    type="text"
-                    id="username"
-                    value={username}
-                    name="Username"
-                    onChange={({ target }) => setUsername(target.value)}
-                />
-            </div>
-            <div>
-                <label htmlFor="password">password</label>
-                <input
-                    type="password"
-                    id="password"
-                    value={password}
-                    name="Password"
-                    onChange={({ target }) => setPassword(target.value)}
-                />
-            </div>
-            <button type="submit">login</button>
-        </form>
+        <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+        />
     );
 
     return (
@@ -124,51 +200,20 @@ const App = () => {
                     <h2>blogs</h2>
                     <p>{user.username} logged in</p>
                     <button onClick={logout}>Log out</button>
-                    <div>
-                        <h3>Create new</h3>
-                        <form noValidate onSubmit={handleCreateBlog}>
-                            <div>
-                                <label htmlFor="title">title</label>
-                                <input
-                                    type="text"
-                                    id="title"
-                                    value={title}
-                                    name="title"
-                                    onChange={({ target }) =>
-                                        setTitle(target.value)
-                                    }
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="author">author</label>
-                                <input
-                                    type="text"
-                                    id="author"
-                                    value={author}
-                                    name="author"
-                                    onChange={({ target }) =>
-                                        setAuthor(target.value)
-                                    }
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="url">url</label>
-                                <input
-                                    type="url"
-                                    id="url"
-                                    value={url}
-                                    name="url"
-                                    onChange={({ target }) =>
-                                        setUrl(target.value)
-                                    }
-                                />
-                            </div>
-                            <button type="submit">Create</button>
-                        </form>
+
+                    {createBlog()}
+
+                    <div className="blogs-list">
+                        {blogs.map((blog) => (
+                            <Blog
+                                key={blog.id}
+                                blog={blog}
+                                user={user.username}
+                                update={() => updateLikes(blog.id)}
+                                deleteBlog={() => deleteBlog(blog.id)}
+                            />
+                        ))}
                     </div>
-                    {blogs.map((blog) => (
-                        <Blog key={blog.id} blog={blog} />
-                    ))}
                 </div>
             )}
         </div>

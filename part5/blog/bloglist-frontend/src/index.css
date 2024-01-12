@@ -26,3 +26,10 @@ h1 {
 .info {
     color: green;
 }
+
+.hide {
+    display: none;
+}
+
+
+
