@@ -39,7 +39,7 @@ blogRouter.get("/api/blogs", async (request, response) => {
         name: 1,
         id: 1,
     });
-    console.log(blogs);
+
     response.json(blogs);
 });
 
@@ -67,6 +67,9 @@ blogRouter.delete(
         }
 
         if (blog.user.toString() !== request.user.id.toString()) {
+            console.log(`blog.user: ${blog.user.toString()}`);
+            console.log("---------------------")
+            console.log(`request.user.id: ${request.user.id.toString()}`);
             return response.status(401).json({ error: "Unauthorized access" });
         }
 
