@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { jwtDecode } from "jwt-decode";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -29,10 +30,22 @@ const App = () => {
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
+        if (loggedUserJSON === null) return;
+        const decodedToken = jwtDecode(loggedUserJSON);
+        const expirationTime = decodedToken.exp * 1000;
+        console.log(decodedToken);
+        console.log(expirationTime);
+        console.log(Date.now());
         if (loggedUserJSON) {
             const user = JSON.parse(loggedUserJSON);
             setUser(user);
             blogService.setToken(user.token);
+        }
+
+        console.log(expirationTime > Date.now());
+        if (expirationTime < Date.now()) {
+            setUser(null);
+            window.localStorage.removeItem("loggedBlogAppUser");
         }
     }, []);
 

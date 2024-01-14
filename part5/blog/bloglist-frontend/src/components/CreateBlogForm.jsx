@@ -12,7 +12,7 @@ function CreateBlogForm({
     return (
         <div>
             <h3>Create new</h3>
-            <form noValidate onSubmit={handleCreateBlog}>
+            <form id="form" noValidate onSubmit={handleCreateBlog}>
                 <div>
                     <label htmlFor="title">title</label>
                     <input

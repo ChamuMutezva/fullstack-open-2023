@@ -9,30 +9,35 @@ const Blog = ({ blog, update, deleteBlog, user }) => {
         borderWidth: 1,
         marginBottom: 5,
     };
-    
+
+    const toggleDetails = () => setHide(!hide);
+
     return (
-        <div style={blogStyle} className={`disclosure`}>
-            <h3>{blog.title}</h3>
+        <div style={blogStyle} className={`blog disclosure`}>
+            <h3>{blog?.title}</h3>
+            <p>{blog?.author}</p>
             <div
                 id="content"
                 className={`disclosure__content ${hide ? "hide" : ""}`}
             >
-                <p>{blog.author}</p>
-                <p>{blog.url}</p>
+                <p>{blog?.url}</p>
                 <div>
-                    <span>Likes {blog.likes}</span>{" "}
+                    <p className="likes__value">
+                        Likes{" "}
+                        <span className="span__value">{blog?.likes}</span>
+                    </p>{" "}
                     <button onClick={update}>Like</button>
                 </div>
-                {(user === blog.user.username) && (
+                {user === blog?.user?.username && (
                     <button onClick={deleteBlog}>Delete</button>
                 )}
             </div>
             <button
                 aria-expanded="false"
                 aria-controls="content"
-                onClick={() => setHide(!hide)}
+                onClick={toggleDetails}
             >
-                {hide ? "View" : "hide"}
+                {hide ? "View" : "Hide"}
             </button>
         </div>
     );
