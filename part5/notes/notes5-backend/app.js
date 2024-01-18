@@ -1,3 +1,4 @@
+require("dotenv").config();
 const config = require("./utils/config");
 const express = require("express");
 const app = express();
@@ -5,9 +6,17 @@ const cors = require("cors");
 const notesRouter = require("./controllers/notes");
 const usersRouter = require("./controllers/users");
 const loginRouter = require("./controllers/login");
+
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
 const mongoose = require("mongoose");
+require("express-async-errors");
+
+if (process.env.NODE_ENV === "test") { 
+    console.log(process.env.NODE_ENV);
+    const testingRouter = require("./controllers/testing");   
+    app.use("/api/testing", testingRouter);
+}
 
 mongoose.set("strictQuery", false);
 
