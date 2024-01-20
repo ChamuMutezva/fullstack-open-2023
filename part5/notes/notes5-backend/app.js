@@ -6,15 +6,15 @@ const cors = require("cors");
 const notesRouter = require("./controllers/notes");
 const usersRouter = require("./controllers/users");
 const loginRouter = require("./controllers/login");
+const testingRouter = require("./controllers/testing");
 
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
 const mongoose = require("mongoose");
 require("express-async-errors");
 
-if (process.env.NODE_ENV === "test") { 
+if (process.env.NODE_ENV.trim("") === "test") {
     console.log(process.env.NODE_ENV);
-    const testingRouter = require("./controllers/testing");   
     app.use("/api/testing", testingRouter);
 }
 
@@ -22,6 +22,8 @@ mongoose.set("strictQuery", false);
 
 logger.info("connecting to database!!!");
 
+logger.info(config.MONGODB_URI);
+logger.info(process.env.NODE_ENV); 
 mongoose
     .connect(config.MONGODB_URI)
     .then(() => {

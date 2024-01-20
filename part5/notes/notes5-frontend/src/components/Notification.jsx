@@ -5,6 +5,7 @@ const Notification = ({ message }) => {
   
     return (
       <div className="error">
+        <span>wrong credentials</span>
         {message}
       </div>
     )

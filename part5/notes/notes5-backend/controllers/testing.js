@@ -1,4 +1,4 @@
-const testingRouter = require("express").Router(); 
+const testingRouter = require("express").Router();
 const Note = require("../models/notes");
 const User = require("../models/user");
 
