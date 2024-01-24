@@ -142,7 +142,7 @@ describe("Blog app", function () {
     });
 
     describe("Login where the user can only see the delete button for own blogs ", function () {
-        it.only("user can see the delete button", function () {
+        it("user can see the delete button", function () {
             cy.login({ username: "Chamu", password: "Chamu" });
             const user = {
                 username: "testuser",
