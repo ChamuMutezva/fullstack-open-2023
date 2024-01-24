@@ -1,7 +1,7 @@
 const config = require("./utils/config");
 const middleware = require("./utils/middleware");
 const express = require("express");
-require("express-async-errors")
+require("express-async-errors");
 const app = express();
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -9,8 +9,14 @@ const logger = require("./utils/logger");
 const blogRouter = require("./controllers/blog");
 const usersRouter = require("./controllers/users");
 const loginRouter = require("./controllers/login");
+const testingRouter = require("./controllers/testing");
 
 mongoose.set("strictQuery", false);
+
+if (process.env.NODE_ENV.trim("") === "test") {
+    console.log(process.env.NODE_ENV);
+    app.use("/api/testing", testingRouter);
+}
 
 mongoose
     .connect(config.MONGO_URI)

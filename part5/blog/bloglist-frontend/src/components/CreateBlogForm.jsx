@@ -43,7 +43,7 @@ function CreateBlogForm({
                         onChange={handleUrlChange}
                     />
                 </div>
-                <button type="submit">Create</button>
+                <button id="createform-btn" type="submit">Create</button>
             </form>
         </div>
     );

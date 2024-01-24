@@ -7,7 +7,7 @@ const LoginForm = ({
     username,
     password,
 }) => (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="login-form">
         <h2>Login to application</h2>
         <div>
             <label htmlFor="username">username</label>
@@ -29,7 +29,7 @@ const LoginForm = ({
                 onChange={handlePasswordChange}
             />
         </div>
-        <button type="submit">login</button>
+        <button id="login-btn" type="submit">login</button>
     </form>
 );
 

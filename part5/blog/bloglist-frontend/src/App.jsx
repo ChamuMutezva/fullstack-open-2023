@@ -18,36 +18,8 @@ const App = () => {
     const [title, setTitle] = useState("");
     const [errorMessage, setErrorMessage] = useState(null);
     const [infoMessage, setInfoMessage] = useState(null);
-    const [loginVisible, setLoginVisible] = useState(false);
+    const [targetBlog, setTargetBlog] = useState({});
     const blogFormRef = useRef();
-
-    useEffect(() => {
-        blogService.getAll().then((blogs) => {
-            blogs.sort((a, b) => a.likes - b.likes);
-            setBlogs(blogs);
-        });
-    }, [blogs]);
-
-    useEffect(() => {
-        const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
-        if (loggedUserJSON === null) return;
-        const decodedToken = jwtDecode(loggedUserJSON);
-        const expirationTime = decodedToken.exp * 1000;
-        console.log(decodedToken);
-        console.log(expirationTime);
-        console.log(Date.now());
-        if (loggedUserJSON) {
-            const user = JSON.parse(loggedUserJSON);
-            setUser(user);
-            blogService.setToken(user.token);
-        }
-
-        console.log(expirationTime > Date.now());
-        if (expirationTime < Date.now()) {
-            setUser(null);
-            window.localStorage.removeItem("loggedBlogAppUser");
-        }
-    }, []);
 
     const logout = () => {
         console.log("log out");
@@ -98,7 +70,8 @@ const App = () => {
     const updateLikes = (id) => {
         const blog = blogs.find((blog) => blog.id === id);
         const changedBlog = { ...blog, likes: blog.likes + 1 };
-        console.log(`like button`);
+        setTargetBlog(changedBlog);
+        console.log(changedBlog);
         blogService
             .update(id, changedBlog)
             .then((returnedBlog) => {
@@ -200,6 +173,34 @@ const App = () => {
             handleSubmit={handleLogin}
         />
     );
+
+    useEffect(() => {
+        blogService.getAll().then((blogs) => {
+            blogs.sort((a, b) => b.likes - a.likes);
+            return setBlogs(blogs);
+        });
+    }, [blogs.length, targetBlog.likes]);
+
+    useEffect(() => {
+        const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
+        if (loggedUserJSON === null) return;
+        const decodedToken = jwtDecode(loggedUserJSON);
+        const expirationTime = decodedToken.exp * 1000;
+        console.log(decodedToken);
+        console.log(expirationTime);
+        console.log(Date.now());
+        if (loggedUserJSON) {
+            const user = JSON.parse(loggedUserJSON);
+            setUser(user);
+            blogService.setToken(user.token);
+        }
+
+        console.log(expirationTime > Date.now());
+        if (expirationTime < Date.now()) {
+            setUser(null);
+            window.localStorage.removeItem("loggedBlogAppUser");
+        }
+    }, []);
 
     return (
         <div>
