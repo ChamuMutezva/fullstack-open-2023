@@ -75,8 +75,8 @@ const App = () => {
         blogService
             .update(id, changedBlog)
             .then((returnedBlog) => {
-                setBlogs(
-                    blogs.map((blog) =>
+                setBlogs(prevState =>
+                    prevState.map((blog) =>
                         Number(blog.id) !== Number(id) ? blog : returnedBlog
                     )
                 );
@@ -179,7 +179,19 @@ const App = () => {
             blogs.sort((a, b) => b.likes - a.likes);
             return setBlogs(blogs);
         });
-    }, [blogs.length, targetBlog.likes]);
+        console.log(blogs.length);
+    }, [blogs.length]);
+
+    useEffect(() => {
+        if (targetBlog !== null) {
+            setBlogs((prevState) =>
+                prevState.map((blog) =>
+                    blog.id === targetBlog.id ? targetBlog : blog
+                )
+            );
+            setTargetBlog(null);
+        }
+    }, [targetBlog, targetBlog?.likes]);
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser");
